@@ -84,8 +84,15 @@ function tick(ms) {
    		img("road", 800 / 2 - 250 / 2, roadY);
    	}*/
    	roadSegments.forEach(road => {
-   		img("road", Math.round(road.x2 + xScroll), Math.round(road.y + yScroll));
+   		c.setTransform(1, 0, (road.x1 - road.x2) / 100, 1, Math.round(road.x2 + xScroll), Math.round(road.y + yScroll));
+   		img("road", 0, 0);
+   		c.resetTransform();
    	});
+   	
+   	/*roadSegments.forEach(road => {
+   		c.fillStyle = "red";
+   		c.fillRect(road.x2 + xScroll, road.y + yScroll, 250, 2);
+   	});*/
    	
    	carts.forEach(cart => {
    		cart.dy += cart.dy * cart.dy / 70 + ms / 400;
