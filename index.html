@@ -21,9 +21,41 @@ function ajax(file, callback) {
 	});
 }
 
+var ready = true;
+
+var carts = [
+	{
+		x: 300,
+		y: 0,
+		w: 80,
+		h: 100
+	}
+];
+
 function tick(ms) {
+    c.fillStyle = "rgb(114, 101, 52)";
+    c.fillRect(0, 0, 800, 600);
     
-	
+   	var xScroll = 0;
+   	var yScroll = 600 - carts[0].h - carts[0].y - 50;
+   	
+   	for (var roadY = -600 + yScroll % 80; roadY < 600; roadY += 80) {
+   		img("road", 800 / 2 - 250 / 2, roadY);
+   	}
+   	
+   	carts.forEach(cart => {
+   		img("cart", cart.x + xScroll, cart.y + yScroll);
+   	});
+   	
+   	if (down("W")) {
+   		carts[0].y -= ms / 4;
+   	}
+   	if (down("A")) {
+   		carts[0].x -= ms / 4;
+   	}
+   	if (down("D")) {
+   		carts[0].x += ms / 4;
+   	}
 }
 
 var images = {};
@@ -45,21 +77,34 @@ var canvas = document.getElementById("gameCanvas");
 var c = canvas.getContext("2d");
 var keys = {};
 var keyCodes = {};
+var keysDown = {};
+var keyCodesDown = {};
 var click = null;
 var mouseDown = false;
 var cursor = {x: 300, y: 300};
 
 // Listen for key presses.
 function canvasKeyUp(e) {
-    keyCodes[e.which] = true;
+    keyCodes[e.key] = true;
     keys[String.fromCharCode(e.which)] = true;
+    keyCodesDown[e.key] = false;
+    keysDown[String.fromCharCode(e.which)] = false;
+}
+
+function canvasKeyDown(e) {
+    keyCodesDown[e.key] = true;
+    keysDown[String.fromCharCode(e.which)] = true;
 }
 
 function pressed(key) {
     return !!keys[key] || !!keyCodes[key];
 }
 
-$('body').keyup(canvasKeyUp);
+function down(key) {
+    return !!keysDown[key] || !!keyCodesDown[key];
+}
+
+$('body').keyup(canvasKeyUp).keydown(canvasKeyDown);
 
 // Listen for mouse stuff.
 function canvasClick(e) {
