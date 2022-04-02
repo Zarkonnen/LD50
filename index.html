@@ -25,7 +25,7 @@ var ready = true;
 
 var carts = [
 	{
-		x: 300,
+		x: 350,
 		y: 0,
 		dy: 0,
 		w: 80,
@@ -34,6 +34,7 @@ var carts = [
 ];
 
 var houses = [];
+var roadSegments = [];
 
 function makeLevel() {
 	var levelLength = 5000;
@@ -51,6 +52,23 @@ function makeLevel() {
 			y -= 200 + Math.round(Math.random() * 100);
 		}
 	}
+	
+	var x = 800 / 2 - 250 / 2;
+	for (var y = 100; y > -levelLength; y -= 80) {
+		var x2 = x + Math.random() * 20 - 10;
+		if (x2 > 800 / 2 - 250 / 2 + 50) {
+			x2 = 800 / 2 - 250 / 2 + 50;
+		}
+		if (x2 < 800 / 2 - 250 / 2 - 50) {
+			x2 = 800 / 2 - 250 / 2 - 50;
+		}
+		roadSegments.push({
+			x1: x,
+			x2: x2,
+			y: y
+		});
+		x = x2;
+	}
 }
 
 makeLevel();
@@ -59,12 +77,15 @@ function tick(ms) {
     c.fillStyle = "rgb(114, 101, 52)";
     c.fillRect(0, 0, 800, 600);
     
-   	var xScroll = 0;
+   	var xScroll = 800 / 2 - carts[0].x - carts[0].w / 2;
    	var yScroll = 600 - carts[0].h - carts[0].y - 50;
    	
-   	for (var roadY = -600 + yScroll % 80; roadY < 600; roadY += 80) {
+   	/*for (var roadY = -600 + yScroll % 80; roadY < 600; roadY += 80) {
    		img("road", 800 / 2 - 250 / 2, roadY);
-   	}
+   	}*/
+   	roadSegments.forEach(road => {
+   		img("road", Math.round(road.x2 + xScroll), Math.round(road.y + yScroll));
+   	});
    	
    	carts.forEach(cart => {
    		cart.dy += cart.dy * cart.dy / 70 + ms / 400;
